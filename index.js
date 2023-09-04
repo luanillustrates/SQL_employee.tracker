@@ -86,9 +86,9 @@ const checkDeptId = (deptID, callback) => {
     sqlConnection.query(query, [deptID], (err, res) => {
         if (err) throw err;
         if (res.length === 0) {
-            console.log('invalid ID. Add the department');
-            startMenu();
-        }  else {
+            console.log('invalid ID. Add the appropriate department');
+            menuStart();
+        } else {
             callback();
         }
     })
@@ -126,6 +126,92 @@ const addRole = () => {
                 if (err) throw err;
                 console.log('role successfully added');
                 menuStart();
+            });
+        });
+    });
+};
+
+const checkRoleId = (roleID, callback) => {
+    const query = 'SELECT * FROM roles WHERE id = ?';
+    sqlConnection.query(query, [roleID], (err, res) => {
+        if (err) throw err;
+        if (res.length === 0) {
+            console.log('invalid ID. Add the appropriate role');
+            menuStart();
+        } else {
+            callback();
+        };
+    });
+};
+
+// employee functions
+const viewEmployees = () => {
+    sqlConnection.query('SELECT * FROM employee', (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        menuStart();
+    });
+};
+
+const addEmployee = () => {
+    sqlConnection.query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employee', (err, res) => {
+        if (err) throw err;
+
+        inquirer.prompt([
+            {
+                type: 'input',
+                name: 'first_name',
+                message: "What is the employee's first name?",
+            },
+            {
+                type: 'input',
+                name: 'last_name',
+                message: "What is the employee's last name?",
+            },
+            {
+                type: 'input',
+                name: 'role_id',
+                message: "What is the employee's role ID?",
+            },
+        ]).then((answer) => {
+            checkRoleId(answer.role_id, () => {
+                sqlConnection.query('INSERT INTO employee SET ?', answer, (err, res) => {
+                    if (err) throw err;
+                    console.log('employee successfully added');
+                    menuStart();
+                });
+            });
+        });
+    });
+};
+
+const updateEmployee = () => {
+    sqlConnection.query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employee', (err, employees) => {
+        if (err) throw err;
+        const employeeDetails = employees.map(employeeChange => ({ name: employeeChange.name, value: employeeChange.id }));
+        sqlConnection.query('SELECT id, title FROM roles', (err, roles) => {
+            if (err) throw err;
+            const roleDetails = roles.map(roleChange => ({ name: roleChange.title, value: roleChange.id }));
+
+            inquirer.prompt([
+                {
+                    type:  'list',
+                    name: 'employeeName',
+                    message: 'which employee would you like to update?',
+                    choices: employeeDetails,
+                },
+                {
+                    type:  'list',
+                    name: 'roleTitle',
+                    message: 'which role would you like to switch to?',
+                    choices: roleDetails,
+                },
+            ]).then((answer) => {
+                sqlConnection.query('UPDATE employee SET role_id ? WHERE role_id = ?', [answer.roleTitle, answer.employeeName], (err, res) => {
+                    if (err) throw err;
+                    console.log('employee successfully updated');
+                    menuStart();
+                });
             });
         });
     });

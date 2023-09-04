@@ -16,11 +16,11 @@ VALUES  ('salesperson', 65000, 1),
 
 SELECT * FROM roles;
 
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES  ('Craig', 'Vino', 5, NULL),
-        ('Robbie', 'Cheng', 2, 4),
-        ('Holly', 'Winters', 3, NULL),
-        ('Sasha', 'Fierce', 4, 2),
-        ('Carter', 'Cortel', 1, NULL);
+INSERT INTO employee (first_name, last_name, role_id)
+VALUES  ('Craig', 'Vino', 5),
+        ('Robbie', 'Cheng', 2),
+        ('Holly', 'Winters', 3),
+        ('Sasha', 'Fierce', 4),
+        ('Carter', 'Cortel', 1);
 
 SELECT * FROM employee;
