@@ -107,7 +107,7 @@ const addRole = () => {
 
     sqlConnection.query('SELECT * FROM departments', (err, departments) => {
         if (err) throw err;
-        const departmentSelect = departments.map(deptChoice => ({ name: deptChoice.name, value: deptChoice.dept_name }));
+        const departmentSelect = departments.map(deptChoice => ({ name: deptChoice.dept_name, value: deptChoice.id }));
         departmentSelect.push({ name: 'None', value: null });
 
         inquirer.prompt([
