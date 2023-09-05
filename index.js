@@ -104,7 +104,6 @@ const viewRole = () => {
 };
 
 const addRole = () => {
-
     sqlConnection.query('SELECT * FROM departments', (err, departments) => {
         if (err) throw err;
         const departmentSelect = departments.map(deptChoice => ({ name: deptChoice.dept_name, value: deptChoice.id }));
