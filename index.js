@@ -96,7 +96,7 @@ const checkDeptId = (deptID, callback) => {
 
 // role functions
 const viewRole = () => {
-    sqlConnection.query('SELECT * FROM roles', (err, res) => {
+    sqlConnection.query('SELECT roles.id, roles.title, roles.salary, departments.dept_name AS department FROM roles INNER JOIN departments ON roles.department_id = departments.id', (err, res) => {
         if (err) throw err;
         console.table(res);
         menuStart();
