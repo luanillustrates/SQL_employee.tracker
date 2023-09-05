@@ -194,9 +194,10 @@ const addEmployee = () => {
 };
 
 const updateEmployee = () => {
-    sqlConnection.query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employee', (err, employees) => {
+    sqlConnection.query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employee', (err, employee) => {
         if (err) throw err;
-        const employeeDetails = employees.map(employeeChange => ({ name: employeeChange.name, value: employeeChange.id }));
+
+        const employeeDetails = employee.map(employeeChange => ({ name: employeeChange.name, value: employeeChange.id }));
         sqlConnection.query('SELECT id, title FROM roles', (err, roles) => {
             if (err) throw err;
             const roleDetails = roles.map(roleChange => ({ name: roleChange.title, value: roleChange.id }));
@@ -215,7 +216,7 @@ const updateEmployee = () => {
                     choices: roleDetails,
                 },
             ]).then((answer) => {
-                sqlConnection.query('UPDATE employee SET role_id ? WHERE role_id = ?', [answer.roleTitle, answer.employeeName], (err, res) => {
+                sqlConnection.query('UPDATE employee SET role_id = ? WHERE id = ?', [answer.roleTitle, answer.employeeName], (err, res) => {
                     if (err) throw err;
                     console.log('employee successfully updated');
                     menuStart();
