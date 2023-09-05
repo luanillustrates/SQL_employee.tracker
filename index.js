@@ -104,28 +104,36 @@ const viewRole = () => {
 };
 
 const addRole = () => {
-    inquirer.prompt([
-        {
-            type: 'input',
-            name: 'title',
-            message: 'What is the new role titled?'
-        },
-        {
-            type: 'input',
-            name: 'salary',
-            message: 'What is the salary for this role?'
-        },
-        {
-            type: 'input',
-            name: 'department_id',
-            message: 'What is the department ID for this role?'
-        },
-    ]).then((answer) => {
-        checkDeptId(answer.department_id, () => {
-            sqlConnection.query('INSERT INTO roles SET ?', answer, (err, res) => {
-                if (err) throw err;
-                console.log('role successfully added');
-                menuStart();
+
+    sqlConnection.query('SELECT * FROM departments', (err, departments) => {
+        if (err) throw err;
+        const departmentSelect = departments.map(deptChoice => ({ name: deptChoice.name, value: deptChoice.dept_name }));
+        departmentSelect.push({ name: 'None', value: null });
+
+        inquirer.prompt([
+            {
+                type: 'input',
+                name: 'title',
+                message: 'What is the new role titled?'
+            },
+            {
+                type: 'input',
+                name: 'salary',
+                message: 'What is the salary for this role?'
+            },
+            {
+                type: 'list',
+                name: 'department_id',
+                message: 'What is the department ID for this role?',
+                choices: departmentSelect,
+            },
+        ]).then((answer) => {
+            checkDeptId(answer.department_id, () => {
+                sqlConnection.query('INSERT INTO roles SET ?', answer, (err, res) => {
+                    if (err) throw err;
+                    console.log('role successfully added');
+                    menuStart();
+                });
             });
         });
     });
@@ -195,13 +203,13 @@ const updateEmployee = () => {
 
             inquirer.prompt([
                 {
-                    type:  'list',
+                    type: 'list',
                     name: 'employeeName',
                     message: 'which employee would you like to update?',
                     choices: employeeDetails,
                 },
                 {
-                    type:  'list',
+                    type: 'list',
                     name: 'roleTitle',
                     message: 'which role would you like to switch to?',
                     choices: roleDetails,
